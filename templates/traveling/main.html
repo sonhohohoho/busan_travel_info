@@ -1,0 +1,30 @@
+<!-- 메인페이지
+1. 검색 기능
+2. 지도 표시
+3. 통계 정보 -->
+
+{% extends "base.html" %}
+{% block content %}
+<div>
+    메인페이지다!
+    <!-- 검색 파트 
+        1. 검색 후 결과 페이지 이동 -->
+
+    <!-- 지도파트 
+        그냥 지도 기능 넣기-->
+    <!-- <div>
+            {% include "office_makers.html" %}
+        </div> -->
+
+
+    <!-- 통계정보 파트 
+        그냥 통계 정보 넣기 -->
+    <!-- 
+    </div> -->
+</div>
+<div>
+    <a href="{% url 'traveling:office'%}">관광안내소 확인</a>
+</div>
+
+
+{% endblock %}
