@@ -16,6 +16,9 @@ class Content(models.Model):
     detail = models.TextField()
     time = models.CharField(max_length=30)
 
+    class Meta:
+        db_table ='content'
+
 
 class Restaurant(models.Model):
     id = models.AutoField(primary_key=True)

@@ -5,11 +5,32 @@
 {% block content %}
 <div class="container my-3">
     <div>
-        결과페이지
+        <h1>{{ gugun }} {{ theme }}</h1>
     </div>
-    <div>
-        {{ finding }}
-    </div>
+    <table class="table">
+        <thead>
+        <tr class="thead-dark">
+            <th>제목</th>
+            <th>주소</th>
+            <th>전화번호</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if finding %}
+        {% for tmp in finding %}
+        <tr>
+            <td><a href="{% url 'traveling:detail' tmp.mainkey.id %}">{{ tmp.mainkey.name }}</a></td>
+            <td>{{ tmp.mainkey.address }}</td>
+            <td>{{ tmp.mainkey.call_number }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3">리스트가 없습니다.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
 
     <!-- 결과 파트 
     게시판 형태 이동 -->
