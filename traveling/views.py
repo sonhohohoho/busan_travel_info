@@ -6,29 +6,41 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Restaurant, Office
+from .models import Restaurant, Office, Content,Attraction,Shopping,Festival
 
 
 import pandas as pd
 
 
 def insert(request):
-    with open('C:/django/busan_travel_info/부산관광안내소정보.csv', 'r', encoding='utf-8') as f:
+    with open('C:/miniproject/busan_travel_info/부산축제정보.csv', 'r', encoding='utf-8') as f:
         df = pd.read_csv(f)
-        axis_zero, axis_one = df.shape
-        y = [i for i in range(axis_one)]
-        for x in range(axis_zero):
-            for j in range(axis_one):
-                if str(type(df.iloc[x, y[j]])) != "<class 'str'>":
-                    df.iloc[x, y[j]] = str(df.iloc[x, y[j]])
-            Office.objects.create(call_number=df.iloc[x, y[1]],
-                                  time=df.iloc[x, y[2]],
-                                  latitude=df.iloc[x, y[3]],
-                                  longitude=df.iloc[x, y[4]],
-                                  name=df.iloc[x, y[5]],
-                                  address=df.iloc[x, y[6]],
-                                  foreign=df.iloc[x, y[7]],
-                                  introduction=df.iloc[x, y[8]])
+        
+        
+
+        for i in range(df.shape[0]):
+            c=Content.objects.create(
+                name=df.콘텐츠명[i],
+                gugun=df.구군[i],
+                latitude=df.위도[i],
+                longitude=df.경도[i],
+                address=df.주소[i],
+                call_number=df.연락처[i],
+                url=df.홈페이지[i],
+                image=df.이미지URL[i],
+                detail=df.상세내용[i],
+                time=df['이용요일 및 시간'][i])
+            
+            Festival.objects.create(
+                mainkey=c,
+                title = df.콘텐츠명[i],
+                traffic = df.교통정보[i],
+                cost = df.이용요금[i],
+                amenity = df.편의시설[i],
+            )
+
+
+
 
         return HttpResponse('데이터 삽입 완료')
 
@@ -57,12 +69,28 @@ def result(request):
     return render(request, 'traveling/result.html')
 
 
-def detail(request):
+def detail(request, c_id):
     """
         세부 결과 페이지
     """
 
-    return render(request, 'traveling/detail.html')
+    content = Content.objects.get(key=c_id)
+    
+    if content.restaurant_set.all() :
+
+        sub = content.restaurant_set.all()[0]
+        context= {'content':content,'rsub':sub}
+    elif content.attraction_set.all():
+        sub = content.attraction_set.all()[0]
+        context={'content':content,'asub':sub}
+    elif content.shopping_set.all():
+        sub = content.shopping_set.all()[0]
+        context={'content':content,'ssub':sub}  
+    else:
+        sub = content.festival_set.all()[0]
+        context={'content':content,'fsub':sub}  
+    
+    return render(request, 'traveling/detail.html',context)
 
 
 def office(request):
