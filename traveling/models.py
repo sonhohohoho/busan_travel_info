@@ -4,7 +4,17 @@ from django.db import models
 
 
 class Content(models.Model):
-    pass
+    key = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=30)
+    gugun = models.CharField(max_length=10)
+    latitude = models.CharField(max_length=60)
+    longitude = models.CharField(max_length=60)
+    address = models.CharField(max_length=100)
+    call_number = models.CharField(max_length=30)
+    url = models.TextField()
+    image = models.TextField()
+    detail = models.TextField()
+    time = models.CharField(max_length=30)
 
 
 class Restaurant(models.Model):
