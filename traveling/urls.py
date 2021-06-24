@@ -10,5 +10,6 @@ urlpatterns = [
     path('result/', views.result, name='result'),  # 결과페이지 -> 검색 결과 및 통계정보 게시
     path('detail/', views.detail, name='detail'),  # 세부페이지 -> 세부 정보 게시
     path('office/', views.office, name='office'),  # 관광안내소 페이지로 연결
-    path('db_insert/', views.insert, name='insert')  # db에 데이터 삽입
+    path('db_insert/', views.insert, name='insert'),  # db에 데이터 삽입
+    path('search/', views.insert, name='search')
 ]

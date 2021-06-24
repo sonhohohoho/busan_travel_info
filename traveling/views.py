@@ -1,3 +1,4 @@
+from typing import ContextManager
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse
 # from .models import Question, Answer, Comment
@@ -6,7 +7,8 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Restaurant, Office
+from .models import *
+from django.db.models import Q
 
 
 import pandas as pd
@@ -30,6 +32,98 @@ def insert(request):
                                   foreign=df.iloc[x, y[7]],
                                   introduction=df.iloc[x, y[8]])
 
+    with open('C:/django/busan_travel_info/부산맛집정보.csv', 'r', encoding='utf-8') as f:
+        df = pd.read_csv(f)
+        for i in range(df.shape[0]):
+            c = Content.objects.create(
+                name=df.콘텐츠명[i],
+                gugun=df.구군[i],
+                latitude=df.위도[i],
+                longitude=df.경도[i],
+                address=df.주소[i],
+                call_number=df.연락처[i],
+                url=df.홈페이지[i],
+                image=df.이미지URL[i],
+                detail=df.상세내용[i],
+                time=df['운영 및 시간'][i])
+
+            Restaurant.objects.create(
+                mainkey=c,
+                represent=df.대표메뉴[i]
+            )
+
+    with open('C:/django/busan_travel_info/부산명소정보.csv', 'r', encoding='utf-8') as f:
+        df = pd.read_csv(f)
+        for i in range(df.shape[0]):
+            c = Content.objects.create(
+                name=df.콘텐츠명[i],
+                gugun=df.구군[i],
+                latitude=df.위도[i],
+                longitude=df.경도[i],
+                address=df.주소[i],
+                call_number=df.연락처[i],
+                url=df.홈페이지[i],
+                image=df.이미지URL[i],
+                detail=df.상세내용[i],
+                time=df['운영 및 시간'][i])
+
+            Attraction.objects.create(
+                mainkey=c,
+                name=df.콘텐츠명[i],
+                title=df.콘텐츠명[i],
+                traffic=df.교통정보[i],
+                break_time=df.휴무일[i],
+                cost=df.이용요금[i],
+                amenity=df.편의시설[i]
+            )
+
+    with open('C:/django/busan_travel_info/부산쇼핑정보.csv', 'r', encoding='utf-8') as f:
+        df = pd.read_csv(f)
+        for i in range(df.shape[0]):
+            c = Content.objects.create(
+                name=df.콘텐츠명[i],
+                gugun=df.구군[i],
+                latitude=df.위도[i],
+                longitude=df.경도[i],
+                address=df.주소[i],
+                call_number=df.연락처[i],
+                url=df.홈페이지[i],
+                image=df.이미지URL[i],
+                detail=df.상세내용[i],
+                time=df['운영 및 시간'][i])
+
+            Shopping.objects.create(
+                mainkey=c,
+                name=df.콘텐츠명[i],
+                title=df.콘텐츠명[i],
+                traffic=df.교통정보[i],
+                break_time=df.휴무일[i],
+                amenity=df.편의시설[i],
+            )
+
+    with open('C:/django/busan_travel_info/부산축제정보.csv', 'r', encoding='utf-8') as f:
+        df = pd.read_csv(f)
+
+        for i in range(df.shape[0]):
+            c = Content.objects.create(
+                name=df.콘텐츠명[i],
+                gugun=df.구군[i],
+                latitude=df.위도[i],
+                longitude=df.경도[i],
+                address=df.주소[i],
+                call_number=df.연락처[i],
+                url=df.홈페이지[i],
+                image=df.이미지URL[i],
+                detail=df.상세내용[i],
+                time=df['이용요일 및 시간'][i])
+
+            Festival.objects.create(
+                mainkey=c,
+                title=df.콘텐츠명[i],
+                traffic=df.교통정보[i],
+                cost=df.이용요금[i],
+                amenity=df.편의시설[i],
+            )
         return HttpResponse('데이터 삽입 완료')
 
 
@@ -38,7 +132,7 @@ def index(request):
         로그인 시도
     """
 
-    return render(request, 'traveling/login_or_signup.html')
+    return render(request, 'traveling/index.html')
 
 
 def main(request):
@@ -53,8 +147,26 @@ def result(request):
     """
         결과페이지
     """
+    gugun_v = request.GET.get('gugun')
+    theme_v = request.GET.get('theme')
+    print(gugun_v)
 
-    return render(request, 'traveling/result.html')
+    # finding = Content.objects.all()[:180]
+
+    if theme_v == "맛집":
+        finding = Content.objects.filter(Q(gugun=gugun_v))
+    else:
+        return render(request, 'traveling/main.html')
+    tmp = Content.objects.all()[:180]
+    context = {'finding': tmp}
+
+
+#     finding = .objects.filter(Q(gugun=gugun_v))
+#     print(finding)
+#     return HttpResponse('검색결과')
+#  # 네임이 backpack 이거나 가격이 9900원인 것
+
+    return render(request, 'traveling/result.html', context)
 
 
 def detail(request):
@@ -71,6 +183,20 @@ def office(request):
     """
 
     return render(request, 'traveling/office_makers.html')
+
+
+def search(request):
+    """ 지역구 및 구군 검색 """
+    kw = request.GET.get('region', 'gugun')  # 검색어
+    if kw:
+        question_list = question_list.filter(
+            Q(subject__icontains=kw) |  # 제목검색
+            Q(content__icontains=kw) |  # 내용검색
+            Q(author__username__icontains=kw) |  # 질문 글쓴이검색
+            Q(answer__author__username__icontains=kw)  # 답글 글쓴이검색
+        ).distinct()
+
+    return render(request, 'traveling/search.html')
 
 
 """ @login_required(login_url='common:login')

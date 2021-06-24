@@ -7,6 +7,7 @@
 {% block content %}
 <div>
     메인페이지다!
+
     <!-- 검색 파트 
         1. 검색 후 결과 페이지 이동 -->
 
@@ -21,6 +22,33 @@
         그냥 통계 정보 넣기 -->
     <!-- 
     </div> -->
+</div>
+<div>
+    <div class="container">
+        <h5 class="my-3 border-bottom pb-2">검색하기</h5>
+        <form method="GET" class="post-form my-3" action="/traveling/result/">
+            {% csrf_token %}
+            <!-- 오류표시 Start -->
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field in form %}
+                {% if field.errors %}
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <!-- 오류표시 End -->
+            <label for="gugun">구군</label>
+            <input type="text" class="form-control" name="gugun" id="gugun"
+                value="{{ form.gugun.value|default_if_none:'' }}">
+            <label for="gugun">테마</label>
+            <input type="text" class="form-control" name="theme" id="theme"
+                value="{{ form.theme.value|default_if_none:'' }}">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </form>
+    </div>
 </div>
 <div>
     <a href="{% url 'traveling:office'%}">관광안내소 확인</a>
