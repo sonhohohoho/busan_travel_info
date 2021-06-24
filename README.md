@@ -8,7 +8,7 @@
 
 * templates : 웹페이지에 렌더링할 html 파일들 혹은 폼
 
-* map_implementation : 지도 시각화 파일 -> 따로 traveling에 삽입하여 처리할 필요있음
+* map_implementation : 지도 시각화 파일 (처리완료)
 
 * static : 부트스트랩 or jQuery 등의 css 파일
 
