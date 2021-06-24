@@ -19,7 +19,7 @@ class Content(models.Model):
 
 class Restaurant(models.Model):
     id = models.AutoField(primary_key=True)
-    representive = models.CharField(max_length=200)
+    represent = models.CharField(max_length=200)
     mainkey = models.ForeignKey(Content, on_delete=models.CASCADE)
 
 
@@ -55,14 +55,12 @@ class Attraction(models.Model):
 
 class User(models.Model):
     id = models.AutoField(primary_key=True)
-    email = models.CharField(100)
-    password = models.CharField(50)
-    name = models.CharField(100)
+    email = models.CharField(max_length=100)
+    password = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
     inst_date = models.DateField(auto_now=True)
     updt_date = models.DateField(auto_now=True)
     mainkey = models.ForeignKey(Content, on_delete=models.CASCADE)
-
-    pass
 
 
 class Favorite(models.Model):
@@ -70,6 +68,16 @@ class Favorite(models.Model):
 
 
 class Office(models.Model):
+    id = models.AutoField(primary_key=True)
+    call_number = models.CharField(max_length=30)
+    time = models.CharField(max_length=30)
+    latitude = models.CharField(max_length=20)
+    longitude = models.CharField(max_length=20)
+    name = models.CharField(max_length=100)
+    address = models.TextField()
+    foreign = models.CharField(max_length=50)
+    introduction = models.TextField()
+
     pass
 
 

@@ -6,6 +6,31 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import Restaurant, Office
+
+
+import pandas as pd
+
+
+def insert(request):
+    with open('C:/django/busan_travel_info/부산관광안내소정보.csv', 'r', encoding='utf-8') as f:
+        df = pd.read_csv(f)
+        axis_zero, axis_one = df.shape
+        y = [i for i in range(axis_one)]
+        for x in range(axis_zero):
+            for j in range(axis_one):
+                if str(type(df.iloc[x, y[j]])) != "<class 'str'>":
+                    df.iloc[x, y[j]] = str(df.iloc[x, y[j]])
+            Office.objects.create(call_number=df.iloc[x, y[1]],
+                                  time=df.iloc[x, y[2]],
+                                  latitude=df.iloc[x, y[3]],
+                                  longitude=df.iloc[x, y[4]],
+                                  name=df.iloc[x, y[5]],
+                                  address=df.iloc[x, y[6]],
+                                  foreign=df.iloc[x, y[7]],
+                                  introduction=df.iloc[x, y[8]])
+
+        return HttpResponse('데이터 삽입 완료')
 
 
 def index(request):
