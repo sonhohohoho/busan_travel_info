@@ -5,8 +5,33 @@
 
 {% extends "base.html" %}
 {% block content %}
+
+<style>
+
+select { 
+    width: 200px; /* 원하는 너비설정 */ 
+padding: .8em .5em; /* 여백으로 높이 설정 */ 
+font-family: inherit; /* 폰트 상속 */ 
+background: url(https://farm1.staticflickr.com/379/19928272501_4ef877c265_t.jpg) no-repeat 95% 50%; /* 네이티브 화살표 대체 */ 
+border: 1px solid #999; 
+border-radius: 0px; /* iOS 둥근모서리 제거 */ 
+-webkit-appearance: none; /* 네이티브 외형 감추기 */ 
+-moz-appearance: none; 
+appearance: none; }
+
+.out{
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    margin: 15px;
+}
+
+
+
+</style>
+
 <div>
-    메인페이지다!
+
     <!-- 검색 파트 
         1. 검색 후 결과 페이지 이동 -->
 
@@ -23,6 +48,98 @@
     </div> -->
 </div>
 <div>
-    <a href="{% url 'traveling:office'%}">관광안내소 확인</a>
+    <div class="container">
+        <h5 class="my-3 border-bottom pb-2">검색하기</h5>
+        <form method="GET" class="post-form my-3" action="/traveling/result/">
+            {% csrf_token %}
+            <!-- 오류표시 Start -->
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field in form %}
+                {% if field.errors %}
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <!-- 오류표시 End -->
+
+            <div class="out" style="margin-top: 10px;">
+                <div class="in" style="height: 300px;width: 500px;margin: 10px;float:left;justify-content: center;align-items: center;">
+                <select class="selectpicker" name= 'gugun' id= 'gugun'>
+                    <option value="금정구">금정구</option>
+                    <option value="수영구">수영구</option>
+                    <option value="영도구">영도구</option>
+                </select>
+    
+    
+    
+    
+                <select class="selectpicker" name= 'theme' id= 'theme'>
+                    <option value="맛집">맛집</option>
+                    <option value="관광명소">관광명소</option>
+                    <option value="쇼핑">쇼핑</option>
+                    <option value="축제">축제</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">검색</button>
+
+                </div>
+
+
+                <div style="height: 300px;width: 400px;margin: 10px;float:left;">
+                    <h2>관광 안내소 위치</h2>
+                    <div class="folium-map" id="map_7df9d53ceb6243d4b572b8150e305b3d" ></div>
+                </div>
+            
+                
+                </div>
+
+            <!-- <label for="gugun">구군</label>
+            <input type="text" class="form-control" name="gugun" id="gugun"
+                value="{{ form.gugun.value|default_if_none:'' }}">
+            <label for="gugun">테마</label>
+            <input type="text" class="form-control" name="theme" id="theme"
+                value="{{ form.theme.value|default_if_none:'' }}"> -->
+            
+        </form>
+    </div>
 </div>
+    <div style="margin-top: 10px;">
+
+
+    <div style="height: 500px;width:700px;margin: 10px;float:left;">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div style="height: 500px;width:500px;margin: 10px;float:left;">
+        <img src="C:\miniproject\\busan_travel_info\\boxplot.jpg">
+    </div>
+    
+
+
+    </div>
+
+
+    <script>
+
+        var ctx = document.getElementById('myChart').getContext('2d'); 
+        var chart = new Chart(ctx, {
+        type: 'bar',
+        data: JSON.parse('{{da|escapejs}}'),
+        options: {
+          title: {
+            display: true,
+            text: 'This is title'
+          },
+          backgroundColor:'#cfcfcf',
+                scales: {
+              xAxes: [{ stacked: true }],
+              yAxes: [{ stacked: true }]
+            }
+        } });
+        
+        
+        </script>
+
 {% endblock %}
